@@ -14,6 +14,10 @@ const projects = [
       "/images/projectsImages/genesis-4.png",
       "/images/projectsImages/genesis-5.png",
       "/images/projectsImages/genesis-6.png",
+      "/images/projectsImages/genesis-7.png",
+      "/images/projectsImages/genesis-8.png",
+      "/images/projectsImages/genesis-9.png",
+      "/images/projectsImages/genesis-10.png",
     ],
   },
   {
@@ -92,6 +96,21 @@ const projects = [
     modalImages: [
       "/images/projectsImages/calculator-1.png",
       "/images/projectsImages/calculator-2.png",
+    ],
+  },
+  {
+    id: 7,
+    title: "Сайт портфолио",
+    description: "Телеграм-бот для быстрых расчётов.",
+    technologies: "React",
+    src: "/images/projectsImages/portfolio_preview.png",
+    demo: "https://t.me/CalcFastBot",
+    modalImages: [
+      "/images/projectsImages/portfolio_preview.png",
+      "/images/projectsImages/portfolio-1.png",
+      "/images/projectsImages/portfolio-2.png",
+      "/images/projectsImages/portfolio-3.png",
+      "/images/projectsImages/portfolio-4.png",
     ],
   },
 ];
