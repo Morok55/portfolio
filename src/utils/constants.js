@@ -72,19 +72,27 @@ const projects = [
   },
   {
     id: 5,
-    title: "Calculator",
-    description: "Телеграм-бот для быстрых расчётов.",
-    technologies: "Telegram Bot API",
-    src: "/images/projectsImages/calculator_preview.png",
-    demo: "https://t.me/CalcFastBot",
-  },
-  {
-    id: 6,
     title: "SwapKitty",
     description: "Телеграм-бот для обменов/транзакций.",
     technologies: "Telegram Bot API",
     src: "/images/projectsImages/swapkitty_preview.png",
     demo: "https://t.me/SwapKitty_bot",
+    modalImages: [
+      "/images/projectsImages/swapkitty-1.png",
+      "/images/projectsImages/swapkitty-2.png",
+    ],
+  },
+  {
+    id: 6,
+    title: "Calculator",
+    description: "Телеграм-бот для быстрых расчётов.",
+    technologies: "Telegram Bot API",
+    src: "/images/projectsImages/calculator_preview.png",
+    demo: "https://t.me/CalcFastBot",
+    modalImages: [
+      "/images/projectsImages/calculator-1.png",
+      "/images/projectsImages/calculator-2.png",
+    ],
   },
 ];
 

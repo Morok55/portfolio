@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaGithub, FaTelegram } from "react-icons/fa";
+import { FaGithub, FaTelegram, FaWhatsapp } from "react-icons/fa";
 import MailCopyIcon from './MailCopyIcon';
 
 const GeneralFooter = () => {
@@ -9,6 +9,10 @@ const GeneralFooter = () => {
             <div className='flex gap-x-4 md:order-last'>
                 <a className='text-4xl hover:text-primary-color hover:animate-bounce' target='_blank' href="https://t.me/unknown955">
                     <FaTelegram />
+                </a>
+
+                <a className='text-4xl hover:text-primary-color hover:animate-bounce' target='_blank' href="https://wa.me/79614852184">
+                    <FaWhatsapp />
                 </a>
 
                 <a className='text-4xl hover:text-primary-color hover:animate-bounce' target='_blank' href="https://github.com/Morok55">

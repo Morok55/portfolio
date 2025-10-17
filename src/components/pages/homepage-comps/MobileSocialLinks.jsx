@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaGithub, FaTelegram } from "react-icons/fa";
+import { FaGithub, FaTelegram, FaWhatsapp } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 // import { BsFillPersonLinesFill } from "react-icons/bs";
 
@@ -38,13 +38,22 @@ const MobileSocialLinks = () => {
       id: 2,
       child: (
         <>
+          <FaWhatsapp  size={30} /> WhatsApp
+        </>
+      ),
+      href: "https://wa.me/79614852184",
+    },
+    {
+      id: 3,
+      child: (
+        <>
           <FaGithub size={20} /> GitHub
         </>
       ),
       href: "https://github.com/Morok55",
     },
     {
-      id: 3,
+      id: 4,
       child: (
         <>
           <HiOutlineMail size={20} /> Почта
