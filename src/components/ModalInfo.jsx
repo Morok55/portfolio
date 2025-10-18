@@ -41,6 +41,21 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
 
   // горизонтальная прокрутка миниатюр + детектор переполнения
   const thumbsRef = useRef(null);
+
+  // refs на каждую миниатюру — чтобы скроллить к активной
+  const thumbRefs = useRef([]);
+
+  // шаг прокрутки = ширина 2-х превью + один межколоночный gap
+  const getScrollStep = () => {
+    const el = thumbsRef.current;
+    if (!el) return 0;
+    const firstThumb = el.querySelector("[data-thumb='true']");
+    const styles = getComputedStyle(el);
+    const gap = parseFloat(styles.columnGap || styles.gap || "0");
+    const w = firstThumb ? firstThumb.offsetWidth : 0;
+    return w * 2 + gap;
+  };
+  
   const [thumbsOverflow, setThumbsOverflow] = useState(false);
   useEffect(() => {
     const el = thumbsRef.current;
@@ -55,7 +70,18 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
       window.removeEventListener("resize", check);
     };
   }, [images.length]);
-  const scrollThumbs = (dir) => thumbsRef.current?.scrollBy({ left: dir * 140, behavior: "smooth" });
+  const scrollThumbs = (dir) => {
+   const step = getScrollStep();
+   if (!thumbsRef.current || !step) return;
+   thumbsRef.current.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const el = thumbRefs.current[idx];
+    if (el && el.scrollIntoView) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [idx]);
 
   // Блокируем прокрутку body, пока модалка смонтирована (и компенсируем ширину скроллбара)
   useEffect(() => {
@@ -155,60 +181,71 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
             {/* Лента миниатюр: компактная, полупрозрачная, одна строка */}
             {images.length > 1 && (
               <>
-                <div
-                  ref={thumbsRef}
-                  className="absolute inset-x-12 bottom-2 z-10 flex gap-2 overflow-x-auto
-                             [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
-                             px-1 py-1 rounded-md bg-black/35"
-                  style={{ scrollSnapType: "x proximity" }}
-                >
-                  {images.map((src, i) => (
-                    <button
-                      type="button"
-                      key={src + i}
-                      onClick={() => setIdx(i)}
-                      className={`relative h-10 w-14 rounded-md overflow-hidden border transition
-                                  ${i === idx
-                                    ? "opacity-70 border-primary-color"
-                                    : "opacity-50 hover:opacity-70 border-white/20 hover:border-white/25"}`}
-                      style={{ scrollSnapAlign: "center" }}
-                      aria-label={`Показать изображение ${i + 1}`}
-                      title={`Изображение ${i + 1}`}
-                    >
-                      <img
-                        src={src}
-                        alt={`preview-${i}`}
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
+                <div className="absolute inset-x-2 bottom-2 z-10">
+                  <div className="flex items-center gap-2">
+                    {/* Левая стрелка — только при переполнении */}
+                    {thumbsOverflow && (
+                      <button
+                        type="button"
+                        onClick={() => scrollThumbs(-1)}
+                        className="h-10 w-8 shrink-0 flex items-center justify-center
+                                  rounded-md bg-black/45 hover:bg-black/60
+                                  transition-colors duration-75 ease-linear"
+                        aria-label="Прокрутить миниатюры влево"
+                        title="Влево"
+                      >
+                        ‹
+                      </button>
+                    )}
 
-                {/* Стрелки прокрутки миниатюр — только при переполнении */}
-                {thumbsOverflow && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => scrollThumbs(-1)}
-                      className="absolute left-2 bottom-2 z-10 h-10 w-8 rounded-md
-                                 bg-black/45 hover:bg-black/60 backdrop-blur-sm
-                                 flex items-center justify-center"
-                      aria-label="Прокрутить миниатюры влево"
+                    {/* Лента миниатюр */}
+                    <div
+                      ref={thumbsRef}
+                      className="flex flex-nowrap gap-2 overflow-x-auto grow
+                                [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
+                                px-1 py-1 rounded-md bg-black/35"
+                      style={{ scrollSnapType: "x proximity" }}
                     >
-                      ‹
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrollThumbs(1)}
-                      className="absolute right-2 bottom-2 z-10 h-10 w-8 rounded-md
-                                 bg-black/45 hover:bg-black/60 backdrop-blur-sm
-                                 flex items-center justify-center"
-                      aria-label="Прокрутить миниатюры вправо"
-                    >
-                      ›
-                    </button>
-                  </>
-                )}
+                      {images.map((src, i) => (
+                        <button
+                          type="button"
+                          key={src + i}
+                          ref={(el) => (thumbRefs.current[i] = el)}
+                          data-thumb="true"
+                          onClick={() => setIdx(i)}
+                          className={`relative h-10 w-14 min-w-[3.5rem] shrink-0 rounded-md overflow-hidden border transition
+                                      ${i === idx
+                                        ? "opacity-70 border-primary-color"
+                                        : "opacity-50 hover:opacity-70 border-white/20 hover:border-white/25"}`}
+                          style={{ scrollSnapAlign: "center" }}
+                          aria-label={`Показать изображение ${i + 1}`}
+                          title={`Изображение ${i + 1}`}
+                        >
+                          <img
+                            src={src}
+                            alt={`preview-${i}`}
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Правая стрелка — только при переполнении */}
+                    {thumbsOverflow && (
+                      <button
+                        type="button"
+                        onClick={() => scrollThumbs(1)}
+                        className="h-10 w-8 shrink-0 flex items-center justify-center
+                                  rounded-md bg-black/45 hover:bg-black/60
+                                  transition-colors duration-75 ease-linear"
+                        aria-label="Прокрутить миниатюры вправо"
+                        title="Вправо"
+                      >
+                        ›
+                      </button>
+                    )}
+                  </div>
+                </div>
               </>
             )}
           </div>
