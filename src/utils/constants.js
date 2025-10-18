@@ -22,18 +22,6 @@ const projects = [
   },
   {
     id: 2,
-    title: "FinAcademia",
-    description: "Телеграм-бот для обучения/сервисных функций.",
-    technologies: "Telegram Bot API, Node.js / Python",
-    src: "/images/projectsImages/finacademia_preview.png",
-    demo: "https://t.me/FinAcademiaBot",
-    modalImages: [
-      "/images/projectsImages/finacademia-1.png",
-      "/images/projectsImages/finacademia-2.png",
-    ],
-  },
-  {
-    id: 3,
     title: "CarTrader Pro",
     description: "Телеграм-бот для торговли авто/объявлений.",
     technologies: "Telegram Bot API, Node.js / Python",
@@ -58,8 +46,21 @@ const projects = [
     ],
   },
   {
+    id: 3,
+    title: "FinAcademia",
+    description: "Телеграм-бот для обучения/сервисных функций.",
+    technologies: "Telegram Bot API, Node.js / Python",
+    src: "/images/projectsImages/finacademia_preview.png",
+    demo: "https://t.me/FinAcademiaBot",
+    modalImages: [
+      "/images/projectsImages/finacademia-1.png",
+      "/images/projectsImages/finacademia-2.png",
+      "/images/projectsImages/finacademia-3.png",
+    ],
+  },
+  {
     id: 4,
-    title: "Clicker",
+    title: "Clicker Game",
     description: "Игровой кликер в Telegram.",
     technologies: "Telegram Mini Apps",
     src: "/images/projectsImages/clicker_preview.png",
@@ -104,7 +105,7 @@ const projects = [
     description: "Телеграм-бот для быстрых расчётов.",
     technologies: "React",
     src: "/images/projectsImages/portfolio_preview.png",
-    demo: "https://t.me/CalcFastBot",
+    demo: "https://kazadaev-portfolio.vercel.app/",
     modalImages: [
       "/images/projectsImages/portfolio_preview.png",
       "/images/projectsImages/portfolio-1.png",
