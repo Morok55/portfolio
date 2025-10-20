@@ -262,9 +262,9 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
             {SelectedProject?.description && (
               <div className="mx-auto">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:p-5">
-                  <p className="text-white/90 leading-relaxed text-base md:text-[17px] whitespace-pre-line text-center md:text-left">
+                  <div className="text-white/90 leading-relaxed text-base md:text-[17px] whitespace-pre-line text-left">
                     {SelectedProject.description}
-                  </p>
+                  </div>
                 </div>
               </div>
             )}

@@ -4,6 +4,8 @@ import HomePage from "./components/pages/HomePage";
 import SocialLinks from "./components/SocialLinks";
 import GeneralFooter from "./components/GeneralFooter";
 
+import { Analytics } from "@vercel/analytics/react";
+
 function App() {
   return (
     <>
@@ -17,6 +19,8 @@ function App() {
         <Route path="/projects" element={<Navigate to="/" replace />} />
       </Routes>
       <GeneralFooter />
+
+      <Analytics />
     </>
   );
 }
