@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
+import { FiExternalLink } from "react-icons/fi";
 
 // ==== Lightbox (fullscreen viewer) ====
 import Lightbox from "yet-another-react-lightbox";
@@ -15,9 +16,9 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
   }, []);
 
   const handleBackdropClick = () => closeModal();
+  const [fsOpen, setFsOpen] = useState(false);
   const handleBackdropIfNoFs = (e) => {
-    // когда открыт лайтбокс — игнорируем клики по бэкдропу модалки
-    if (fsOpen) return;
+    if (fsOpen) return; // не закрываем модалку кликом по фону, пока открыт лайтбокс
     handleBackdropClick(e);
   };
   const stop = (e) => e.stopPropagation();
@@ -27,25 +28,19 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
     if (Array.isArray(SelectedProject?.modalImages) && SelectedProject.modalImages.length > 0) {
       return SelectedProject.modalImages;
     }
-    return [SelectedProject.src];
+    return [SelectedProject?.src].filter(Boolean);
   }, [SelectedProject]);
 
   // активный кадр
   const [idx, setIdx] = useState(0);
-
-  // навигация главного изображения
   const canPrev = idx > 0;
   const canNext = idx < images.length - 1;
   const onPrev = () => canPrev && setIdx((i) => i - 1);
   const onNext = () => canNext && setIdx((i) => i + 1);
 
-  // горизонтальная прокрутка миниатюр + детектор переполнения
+  // горизонтальная прокрутка миниатюр + переполнение
   const thumbsRef = useRef(null);
-
-  // refs на каждую миниатюру — чтобы скроллить к активной
   const thumbRefs = useRef([]);
-
-  // шаг прокрутки = ширина 2-х превью + один межколоночный gap
   const getScrollStep = () => {
     const el = thumbsRef.current;
     if (!el) return 0;
@@ -53,9 +48,8 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
     const styles = getComputedStyle(el);
     const gap = parseFloat(styles.columnGap || styles.gap || "0");
     const w = firstThumb ? firstThumb.offsetWidth : 0;
-    return w * 2 + gap;
+    return w * 2 + gap; // два превью + gap
   };
-  
   const [thumbsOverflow, setThumbsOverflow] = useState(false);
   useEffect(() => {
     const el = thumbsRef.current;
@@ -71,38 +65,51 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
     };
   }, [images.length]);
   const scrollThumbs = (dir) => {
-   const step = getScrollStep();
-   if (!thumbsRef.current || !step) return;
-   thumbsRef.current.scrollBy({ left: dir * step, behavior: "smooth" });
+    const step = getScrollStep();
+    if (!thumbsRef.current || !step) return;
+    thumbsRef.current.scrollBy({ left: dir * step, behavior: "smooth" });
   };
-
   useEffect(() => {
     const el = thumbRefs.current[idx];
-    if (el && el.scrollIntoView) {
+    if (el?.scrollIntoView) {
       el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
   }, [idx]);
 
-  // Блокируем прокрутку body, пока модалка смонтирована (и компенсируем ширину скроллбара)
+  // Блокируем прокрутку body, пока модалка смонтирована
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     const originalPaddingRight = document.body.style.paddingRight;
-
     const scrollbar = window.innerWidth - document.documentElement.clientWidth;
-    if (scrollbar > 0) {
-      document.body.style.paddingRight = `${scrollbar}px`;
-    }
+    if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = originalOverflow;
       document.body.style.paddingRight = originalPaddingRight;
     };
   }, []);
 
-  // ==== fullscreen viewer (Lightbox) ====
-  const [fsOpen, setFsOpen] = useState(false);
+  // ==== Lightbox ====
   const slides = useMemo(() => images.map((src) => ({ src })), [images]);
+
+  // ===== Технологический стек: парсинг строки в удобный вид (НОВОЕ) =====
+  const techParsed = useMemo(() => {
+    const raw = SelectedProject?.technologies?.trim?.();
+    if (!raw) return [];
+    // строки вида "Frontend: React, Redux"
+    return raw
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [labelPart, valuePart] = line.split(":");
+        const label = (labelPart || "").trim();
+        const value = (valuePart || "").trim();
+        // делим значения на «бейджи» по запятым
+        const items = value ? value.split(",").map((s) => s.trim()).filter(Boolean) : [];
+        return { label, items, value };
+      });
+  }, [SelectedProject?.technologies]);
 
   return (
     <section
@@ -133,23 +140,23 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
         {/* Контент */}
         <div
           className="p-4 md:p-6 overflow-auto max-h-[85vh] overscroll-contain
-                    [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                     [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
-          {/* Большое изображение + новые полно-высотные стрелки */}
+          {/* Большое изображение + стрелки */}
           <div className="relative">
             <img
               src={images[idx]}
-              alt={SelectedProject.title}
+              alt={SelectedProject?.title}
               className="w-full max-h-[52vh] object-contain rounded-xl bg-black/20 cursor-zoom-in"
-              onClick={() => setFsOpen(true)} // Открываем Lightbox
+              onClick={() => setFsOpen(true)}
             />
 
-            {/* мягкий градиент под лентой, чтобы не «рубить» основное фото */}
+            {/* градиент под лентой */}
             {images.length > 1 && (
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 rounded-b-xl bg-gradient-to-t from-black/55 via-black/25 to-transparent" />
             )}
 
-            {/* Стрелки: во всю высоту изображения, с лёгким затемнением и крупной стрелкой */}
+            {/* стрелки полно-высотные */}
             {images.length > 1 && (
               <>
                 <button
@@ -163,7 +170,6 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
                 >
                   <span className="text-3xl md:text-5xl select-none">‹</span>
                 </button>
-
                 <button
                   onClick={onNext}
                   disabled={!canNext}
@@ -178,105 +184,150 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
               </>
             )}
 
-            {/* Лента миниатюр: компактная, полупрозрачная, одна строка */}
+            {/* Лента миниатюр */}
             {images.length > 1 && (
-              <>
-                <div className="absolute inset-x-2 bottom-2 z-10">
-                  <div className="flex items-center gap-2">
-                    {/* Левая стрелка — только при переполнении */}
-                    {thumbsOverflow && (
-                      <button
-                        type="button"
-                        onClick={() => scrollThumbs(-1)}
-                        className="h-10 w-8 shrink-0 flex items-center justify-center
-                                  rounded-md bg-black/45 hover:bg-black/60
-                                  transition-colors duration-75 ease-linear"
-                        aria-label="Прокрутить миниатюры влево"
-                        title="Влево"
-                      >
-                        ‹
-                      </button>
-                    )}
-
-                    {/* Лента миниатюр */}
-                    <div
-                      ref={thumbsRef}
-                      className="flex flex-nowrap gap-2 overflow-x-auto grow
-                                [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
-                                px-1 py-1 rounded-md bg-black/35"
-                      style={{ scrollSnapType: "x proximity" }}
+              <div className="absolute inset-x-2 bottom-2 z-10">
+                <div className="flex items-center gap-2">
+                  {thumbsOverflow && (
+                    <button
+                      type="button"
+                      onClick={() => scrollThumbs(-1)}
+                      className="h-10 w-8 shrink-0 flex items-center justify-center
+                                 rounded-md bg-black/45 hover:bg-black/60
+                                 transition-colors duration-75 ease-linear"
+                      aria-label="Прокрутить миниатюры влево"
+                      title="Влево"
                     >
-                      {images.map((src, i) => (
-                        <button
-                          type="button"
-                          key={src + i}
-                          ref={(el) => (thumbRefs.current[i] = el)}
-                          data-thumb="true"
-                          onClick={() => setIdx(i)}
-                          className={`relative h-10 w-14 min-w-[3.5rem] shrink-0 rounded-md overflow-hidden border transition
-                                      ${i === idx
-                                        ? "opacity-70 border-primary-color"
-                                        : "opacity-50 hover:opacity-70 border-white/20 hover:border-white/25"}`}
-                          style={{ scrollSnapAlign: "center" }}
-                          aria-label={`Показать изображение ${i + 1}`}
-                          title={`Изображение ${i + 1}`}
-                        >
-                          <img
-                            src={src}
-                            alt={`preview-${i}`}
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
+                      ‹
+                    </button>
+                  )}
 
-                    {/* Правая стрелка — только при переполнении */}
-                    {thumbsOverflow && (
+                  <div
+                    ref={thumbsRef}
+                    className="flex flex-nowrap gap-2 overflow-x-auto grow
+                               [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
+                               px-1 py-1 rounded-md bg-black/35"
+                    style={{ scrollSnapType: "x proximity" }}
+                  >
+                    {images.map((src, i) => (
                       <button
                         type="button"
-                        onClick={() => scrollThumbs(1)}
-                        className="h-10 w-8 shrink-0 flex items-center justify-center
-                                  rounded-md bg-black/45 hover:bg-black/60
-                                  transition-colors duration-75 ease-linear"
-                        aria-label="Прокрутить миниатюры вправо"
-                        title="Вправо"
+                        key={src + i}
+                        ref={(el) => (thumbRefs.current[i] = el)}
+                        data-thumb="true"
+                        onClick={() => setIdx(i)}
+                        className={`relative h-10 w-14 min-w-[3.5rem] shrink-0 rounded-md overflow-hidden border transition
+                                    ${i === idx
+                                      ? "opacity-70 border-primary-color"
+                                      : "opacity-50 hover:opacity-70 border-white/20 hover:border-white/25"}`}
+                        style={{ scrollSnapAlign: "center" }}
+                        aria-label={`Показать изображение ${i + 1}`}
+                        title={`Изображение ${i + 1}`}
                       >
-                        ›
+                        <img
+                          src={src}
+                          alt={`preview-${i}`}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
                       </button>
-                    )}
+                    ))}
                   </div>
+
+                  {thumbsOverflow && (
+                    <button
+                      type="button"
+                      onClick={() => scrollThumbs(1)}
+                      className="h-10 w-8 shrink-0 flex items-center justify-center
+                                 rounded-md bg-black/45 hover:bg-black/60
+                                 transition-colors duration-75 ease-linear"
+                      aria-label="Прокрутить миниатюры вправо"
+                      title="Вправо"
+                    >
+                      ›
+                    </button>
+                  )}
                 </div>
-              </>
+              </div>
             )}
           </div>
 
-          {/* Текстовая часть: только заголовок и описание */}
-          <div className="mt-6">
-            <h3 className="text-2xl font-semibold text-center mb-3">
-              {SelectedProject.title}
+          {/* ====== Текстовая часть ====== */}
+          <div className="mt-6 space-y-6">
+            {/* Заголовок */}
+            <h3 className="text-2xl font-semibold text-center">
+              {SelectedProject?.title}
             </h3>
 
-            {SelectedProject.description && (
-              <p className="text-white/90 leading-relaxed text-base text-center">
-                {SelectedProject.description}
-              </p>
+            {/* Описание — аккуратно, читабельно (НОВОЕ оформление) */}
+            {SelectedProject?.description && (
+              <div className="mx-auto">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:p-5">
+                  <p className="text-white/90 leading-relaxed text-base md:text-[17px] whitespace-pre-line text-center md:text-left">
+                    {SelectedProject.description}
+                  </p>
+                </div>
+              </div>
             )}
 
-            {/* Кнопка «Открыть проект» — спокойная + hover */}
-            {SelectedProject.demo && (
-              <div className="mt-6 flex justify-center">
+            {/* Технологический стек — красиво и компактно (НОВОЕ) */}
+            {techParsed.length > 0 && (
+              <div className="mx-auto">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:p-5">
+                  <h4 className="text-lg font-medium mb-3 text-center md:text-left">
+                    Технологический стек
+                  </h4>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {techParsed.map(({ label, items, value }, i) => (
+                      <div key={i} className="rounded-xl bg-white/4 p-3 border border-white/5">
+                        {label && (
+                          <div className="text-[12px] uppercase tracking-wide text-white/60 mb-2">
+                            {label}
+                          </div>
+                        )}
+
+                        {/* если удалось распарсить в бейджи — показываем бейджи; иначе — просто текст */}
+                        {items.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {items.map((chip, j) => (
+                              <span
+                                key={j}
+                                className="inline-flex items-center rounded-md px-2.5 py-1 text-sm
+                                           bg-white/10 ring-1 ring-white/10 text-white/90"
+                              >
+                                {chip}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-white/90">{value}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {SelectedProject?.demo && (
+              <div className="flex justify-center">
                 <a
                   target="_blank"
                   rel="noreferrer"
                   href={SelectedProject.demo}
-                  className="inline-flex items-center justify-center rounded-xl
-                             px-5 py-2.5 font-medium
-                             bg-white/10 hover:bg-white/15
-                             text-white ring-1 ring-white/20 hover:ring-white/40
-                             shadow-[0_8px_30px_rgba(0,0,0,0.25)]
-                             transition"
+                  title="Открыть проект в новой вкладке"
+                  className="
+                    inline-flex items-center gap-2 cursor-pointer
+                    rounded-lg px-4 py-3 lg:px-5 lg:py-4 font-medium
+                    text-[1.05rem] lg:text-[1.15rem]
+                    text-white/95 transition duration-200
+                    hover:scale-105 hover:bg-primary-color hover:text-black
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-color/60
+                    active:scale-100
+                  "
                 >
-                  Открыть проект
+                  <span className="relative">Открыть проект</span>
+                  <FiExternalLink className="relative text-lg opacity-80 group-hover:opacity-100" />
                 </a>
               </div>
             )}
@@ -290,15 +341,11 @@ export function ModalInfo({ SelectedProject, closeModal, isHiding = false }) {
         close={() => setFsOpen(false)}
         slides={slides}
         index={idx}
-        // синхроним наружный индекс при перелистывании внутри лайтбокса
-        on={{
-          view: ({ index }) => setIdx(index),
-        }}
-        // UX настройки
-        carousel={{ finite: false }}              // можно листать по кругу
-        render={{ slide: undefined }}             // стандартный слайд
+        on={{ view: ({ index }) => setIdx(index) }}
+        carousel={{ finite: false }}
+        render={{ slide: undefined }}
         plugins={[Zoom, Fullscreen]}
-        zoom={{ maxZoomPixelRatio: 3, scrollToZoom: true }} // зум до ~3x
+        zoom={{ maxZoomPixelRatio: 3, scrollToZoom: true }}
       />
     </section>
   );

@@ -3,7 +3,6 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import HomePage from "./components/pages/HomePage";
 import SocialLinks from "./components/SocialLinks";
 import GeneralFooter from "./components/GeneralFooter";
-// ⛔️ убрали AboutPage и AllTechsPage
 
 function App() {
   return (
