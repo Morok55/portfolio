@@ -28,7 +28,7 @@ const MobileSocialLinks = () => {
       id: 1,
       child: (
         <>
-          <FaTelegram size={20} /> Telegram
+          <FaTelegram className="w-5 h-5 shrink-0 flex-none" /> Telegram
         </>
       ),
       href: "https://t.me/unknown955",
@@ -38,7 +38,7 @@ const MobileSocialLinks = () => {
       id: 2,
       child: (
         <>
-          <FaWhatsapp  size={30} /> WhatsApp
+          <FaWhatsapp className="w-5 h-5 shrink-0 flex-none" /> WhatsApp
         </>
       ),
       href: "https://wa.me/79614852184",
@@ -47,7 +47,7 @@ const MobileSocialLinks = () => {
       id: 3,
       child: (
         <>
-          <FaGithub size={20} /> GitHub
+          <FaGithub className="w-5 h-5 shrink-0 flex-none" /> GitHub
         </>
       ),
       href: "https://github.com/Morok55",
@@ -56,7 +56,7 @@ const MobileSocialLinks = () => {
       id: 4,
       child: (
         <>
-          <HiOutlineMail size={20} /> Почта
+          <HiOutlineMail className="w-5 h-5 shrink-0 flex-none" /> Почта
         </>
       ),
       // БЫЛО: href: 'mailto:kazadaevalex@yandex.ru'
@@ -83,17 +83,17 @@ const MobileSocialLinks = () => {
           <li
             key={id}
             className={
-              "flex items-center gap-2 w-28 h-9 px-4 bg-gradient-to-t from-green-400/50 to-primary-color/50 rounded-md " +
+              "flex items-center gap-2 min-w-[7rem] h-9 px-2 bg-gradient-to-t from-green-400/50 to-primary-color/50 rounded-md " +
               (style ?? "")
             }
           >
             {href ? (
               <a
                 href={href}
-                className="flex gap-3 items-center w-full text-white text-sm"
-                download={download}
+                className="flex gap-2 items-center w-full text-white text-sm whitespace-nowrap"
                 target="_blank"
                 rel="noreferrer"
+                download={download}
               >
                 {child}
               </a>
@@ -101,7 +101,7 @@ const MobileSocialLinks = () => {
               <button
                 type="button"
                 onClick={onClick}
-                className="flex gap-3 items-center w-full text-white text-sm"
+                className="flex gap-3 items-center w-full text-white text-sm whitespace-nowrap"
                 aria-label="Скопировать e-mail"
               >
                 {child}
@@ -116,7 +116,7 @@ const MobileSocialLinks = () => {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-3 py-2 rounded shadow"
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-3 py-2 rounded shadow z-50"
         >
           Почта скопирована
         </div>

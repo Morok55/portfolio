@@ -140,7 +140,7 @@ const projects = [
       Сайт структурирован по разделам: <strong>проекты</strong>, <strong>технологии</strong>, <strong>образование</strong> и <strong>контакты</strong>.
       Каждый проект оформлен в виде карточки с превью и ссылкой на <strong>демо</strong>.
     </>,
-    technologies: "Frontend: React, Vite, TailwindCSS\nКонтроль версий: Git, GitHub",
+    technologies: "Frontend: React, Vite\nКонтроль версий: Git, GitHub",
     src: "/images/projectsImages/portfolio_preview.png",
     demo: "https://kazadaev-portfolio.vercel.app/",
     modalImages: [
