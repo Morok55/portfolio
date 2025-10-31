@@ -20,7 +20,7 @@ const Home = () => {
 
           {/* абзац по центру на мобилках */}
           <p className="text-gray-300 py-4 max-w-md text-center md:text-left leading-relaxed">
-            Фронтенд-разработчик (React, TypeScript). Студент 2 курса Финансового университета. Фокус на производительности, доступности и чистоте кода.
+            Фронтенд-разработчик (React, TypeScript). Студент Финансового университета. Фокус на производительности, доступности и чистоте кода.
           </p>
 
           <div className="hidden desktop:flex">

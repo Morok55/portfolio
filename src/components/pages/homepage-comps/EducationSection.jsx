@@ -40,23 +40,23 @@ const EducationSection = () => {
         <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
           {/* Текст */}
           <div className="space-y-4">
-            <p className="text-lg md:text-xl leading-relaxed text-white/90">
+            <p className="text-lg md:text-lg leading-relaxed text-white/90">
               Я студент{" "}
               <span className="font-semibold">
-                2&nbsp;курса Финансового университета при Правительстве Российской Федерации
+                3&nbsp;курса Финансового университета при Правительстве Российской Федерации
               </span>{" "}
               по направлению{" "}
               <span className="italic">«Технологии разработки программного обеспечения»</span>{" "}
               факультета Информационных технологий и анализа больших данных.
             </p>
 
-            <p className="text-lg md:text-xl leading-relaxed text-white/90">
+            <p className="text-lg md:text-lg leading-relaxed text-white/90">
               Дополнительно являюсь участником образовательного модуля{" "}
               <span className="font-semibold">с углублённым изучением Web-разработки</span>, 
               что позволяет развивать практические навыки в современных технологиях фронтенда.
             </p>
 
-            <p className="text-lg md:text-xl text-white/90">
+            <p className="text-lg md:text-lg text-white/90">
               Открыт к проектам и стажировкам, готов обсуждать форматы сотрудничества.
             </p>
 
