@@ -1,3 +1,4 @@
+// EducationSection.jsx
 import React, { useMemo } from "react";
 import { Link as ScrollLink } from "react-scroll";
 
@@ -40,7 +41,7 @@ const EducationSection = () => {
         <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
           {/* Текст */}
           <div className="space-y-4">
-            <p className="text-lg md:text-lg leading-relaxed text-white/90">
+            <p className="text-base md:text-base leading-relaxed text-white/90">
               Я студент{" "}
               <span className="font-semibold">
                 3&nbsp;курса Финансового университета при Правительстве Российской Федерации
@@ -50,13 +51,13 @@ const EducationSection = () => {
               факультета Информационных технологий и анализа больших данных.
             </p>
 
-            <p className="text-lg md:text-lg leading-relaxed text-white/90">
+            <p className="text-base md:text-base leading-relaxed text-white/90">
               Дополнительно являюсь участником образовательного модуля{" "}
               <span className="font-semibold">с углублённым изучением Web-разработки</span>, 
               что позволяет развивать практические навыки в современных технологиях фронтенда.
             </p>
 
-            <p className="text-lg md:text-lg text-white/90">
+            <p className="text-base md:text-base text-white/90">
               Открыт к проектам и стажировкам, готов обсуждать форматы сотрудничества.
             </p>
 
@@ -109,36 +110,7 @@ const EducationSection = () => {
             </div>
           </div>
 
-          {/* (опционально) если хочешь всё-таки показать небольшой круг на sm,
-              раскомментируй блок ниже и убери мобильный бейдж выше */}
-          {/*
-          <div className="md:hidden justify-self-start mt-2">
-            <div className="relative" style={{ width: sizeSm, height: sizeSm }}>
-              <svg width={sizeSm} height={sizeSm} viewBox={`0 0 ${sizeSm} ${sizeSm}`} className="-rotate-90">
-                <circle cx={sizeSm/2} cy={sizeSm/2} r={rSm} fill="none" stroke="#151616" strokeWidth={stroke} />
-                <circle
-                  cx={sizeSm/2}
-                  cy={sizeSm/2}
-                  r={rSm}
-                  fill="none"
-                  stroke="currentColor"
-                  className="text-primary-color transition-[stroke-dashoffset] duration-700 ease-out"
-                  strokeWidth={stroke}
-                  strokeLinecap="round"
-                  strokeDasharray={dashSm.dasharray}
-                  strokeDashoffset={dashSm.dashoffset}
-                />
-              </svg>
-              <div className="absolute inset-0 rotate-0 flex flex-col items-center justify-center">
-                <div className="text-2xl font-bold tabular-nums lining-nums">
-                  {GPA_CURRENT}
-                  <span className="text-white/60 text-sm"> / {GPA_MAX}</span>
-                </div>
-                <div className="text-xs text-white/60 mt-1">средний балл</div>
-              </div>
-            </div>
-          </div>
-          */}
+          {/* (опционально) маленький круг на sm — см. комментарий в исходнике */}
         </div>
       </div>
 
